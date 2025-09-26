@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photography Portfolio</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500;600;700&display=swap');
+
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Kanit', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #333 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 0 2rem;
+            opacity: 0;
+            transform: translateY(80px) scale(0.9);
+            animation: heroEntrance 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 200;
+            margin-bottom: 1rem;
+            letter-spacing: 8px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards;
+        }
+
+        .hero h2 {
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            letter-spacing: 4px;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+        }
+
+        .hero h3 {
+            font-size: 2.5rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+            letter-spacing: 6px;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .hero h3:nth-of-type(3) {
+            animation: slideInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 1.2s forwards;
+        }
+
+        .hero h3:nth-of-type(4) {
+            animation: slideInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 1.4s forwards;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #fff;
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: scale(1);
+            opacity: 0;
+            animation: slideInUp 1s cubic-bezier(0.16, 1, 0.3, 1) 1.6s forwards;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 15px 40px rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .cta-button:active {
+            transform: scale(0.98) translateY(0px);
+            transition: all 0.1s ease;
+        }
+
+        /* Gallery Section */
+        /*
+ * ส่วนนี้คือ Masonry Layout ที่ใช้ CSS Multi-column
+ * ทำให้รูปภาพจัดเรียงในคอลัมน์ต่างๆ โดยเติมเต็มช่องว่างด้านบน
+ */
+        .gallery-grid {
+            /* กำหนดจำนวนคอลัมน์และช่องว่างระหว่างคอลัมน์ */
+            column-count: 4;
+            /* เริ่มต้นด้วย 4 คอลัมน์บนหน้าจอใหญ่ */
+            column-gap: 15px;
+            /* ช่องว่าง 15px ระหว่างคอลัมน์ */
+            padding: 20px;
+            max-width: 1200px;
+            /* จำกัดความกว้างสูงสุดของแกลเลอรี */
+            margin: 0 auto;
+        }
+
+        .gallery-item {
+            /* ป้องกันไม่ให้ไอเท็มถูกแบ่งข้ามระหว่างคอลัมน์ */
+            break-inside: avoid;
+
+            /* เว้นช่องว่างด้านล่างของแต่ละไอเท็ม */
+            margin-bottom: 15px;
+
+            /* ตั้งค่าให้องค์ประกอบลูกทั้งหมดแสดงผลตามลำดับ (สำคัญสำหรับ Masonry) */
+            display: inline-block;
+            width: 100%;
+            /* ทำให้ Item กว้างเต็มคอลัมน์ */
+            border-radius: 8px;
+            /* เพิ่มขอบมนนิดหน่อย */
+            overflow: hidden;
+            /* ซ่อนขอบของรูปภาพที่อาจเกินมา */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* เพิ่มเงาให้ดูสวยงาม */
+        }
+
+        .gallery-item img {
+            /* หัวใจสำคัญ: ทำให้รูปภาพปรับความกว้างเต็มตามคอลัมน์แต่คงสัดส่วนเดิมไว้ */
+            width: 100%;
+            height: auto;
+            /* รักษาอัตราส่วนของรูปภาพ (Aspect Ratio) */
+            display: block;
+            /* ลบช่องว่างที่ไม่ต้องการใต้รูปภาพ */
+            transition: transform 0.3s ease;
+            /* เพิ่ม Transition สำหรับ Hover Effect */
+        }
+
+        /* Hover Effect */
+        .gallery-item img:hover {
+            transform: scale(1.02);
+            /* ขยายรูปภาพเล็กน้อยเมื่อชี้เมาส์ */
+        }
+
+        /* * การปรับ Responsive ด้วย Media Queries 
+ * เพื่อปรับจำนวนคอลัมน์ตามขนาดหน้าจอ
+ */
+
+        /* สำหรับ Tablet (หน้าจอ 768px ขึ้นไป) */
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                column-count: 3;
+            }
+        }
+
+        /* สำหรับ Mobile Landscape/Tablet เล็ก (หน้าจอ 576px ขึ้นไป) */
+        @media (max-width: 768px) {
+            .gallery-grid {
+                column-count: 2;
+                column-gap: 10px;
+            }
+        }
+
+        /* สำหรับ Mobile Portrait (หน้าจอเล็กกว่า 576px) */
+        @media (max-width: 576px) {
+            .gallery-grid {
+                column-count: 1;
+                /* เหลือ 1 คอลัมน์สำหรับมือถือจอเล็ก */
+                padding: 10px;
+            }
+        }
+
+        /* สไตล์ทั่วไป (เพื่อให้ดูดีขึ้น) */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+
+        .gallery-section h2 {
+            text-align: center;
+            padding-top: 30px;
+            color: #333;
+        }
+
+        .gallery-section {
+            padding: 8rem 2rem;
+            background: #fff;
+            color: #000;
+        }
+
+        .gallery-section h2 {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 4rem;
+            letter-spacing: 4px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .gallery-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+
+
+        /* Pricing Section */
+        .pricing {
+            padding: 8rem 2rem;
+            background: #f5f5f5;
+            color: #000;
+        }
+
+        .pricing-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+        }
+
+        .pricing-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007AFF, #5856D6, #AF52DE);
+            transform: scaleX(0);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .pricing-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.15);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .pricing-card:active {
+            transform: translateY(-8px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+
+        .pricing-card.special {
+            background: linear-gradient(135deg, #000 0%, #333 100%);
+            color: #fff;
+        }
+
+        .pricing-card h3 {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .pricing-card h4 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            text-align: center;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .price-list {
+            margin-bottom: 2rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #eee;
+            font-size: 1.1rem;
+        }
+
+        .pricing-card.special .price-item {
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .price-item span:last-child {
+            font-weight: 600;
+            font-size: 1.3rem;
+        }
+
+        .package-details {
+            font-size: 0.9rem;
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
+        .package-details p {
+            margin-bottom: 1rem;
+        }
+
+        .special-features {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .special-features p {
+            margin-bottom: 1rem;
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .special-features p:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 8rem 2rem;
+            background: #000;
+            color: #fff;
+        }
+
+        .contact-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact h2 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 4rem;
+            letter-spacing: 4px;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        .contact-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .contact-link {
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            opacity: 0;
+            transform: translateY(60px) scale(0.95);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.8s ease;
+        }
+
+        .contact-link:hover::before {
+            left: 100%;
+        }
+
+        .contact-link:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .contact-link:active {
+            transform: translateY(-8px) scale(1.01);
+            transition: all 0.1s ease;
+        }
+
+        .contact-icon {
+            font-size: 3rem;
+            margin-right: 1.5rem;
+        }
+
+        .contact-info h3 {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info p {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
+
+        .footer p {
+            opacity: 0.6;
+            margin: 0;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes heroEntrance {
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .animate-in {
+            opacity: 1 !important;
+            transform: translateY(0) scale(1) !important;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced navbar animation */
+        .navbar {
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .gallery-grid {
+                columns: 3;
+                column-gap: 12px;
+            }
+
+            .pricing-container {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 2rem;
+            }
+
+            .contact-links {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 0 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+                letter-spacing: 4px;
+            }
+
+            .hero h2 {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            .hero h3 {
+                font-size: 1.8rem;
+                letter-spacing: 3px;
+            }
+
+            .gallery-grid {
+                columns: 2;
+                column-gap: 10px;
+            }
+
+            .gallery-section {
+                padding: 6rem 1rem;
+            }
+
+            .pricing {
+                padding: 6rem 1rem;
+            }
+
+            .pricing-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .pricing-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .pricing-card h3 {
+                font-size: 1.5rem;
+            }
+
+            .contact {
+                padding: 6rem 1rem;
+            }
+
+            .contact h2 {
+                font-size: 2rem;
+            }
+
+            .contact-link {
+                padding: 1.5rem;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .contact-icon {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.5rem;
+                letter-spacing: 2px;
+            }
+
+            .hero h2 {
+                font-size: 1.2rem;
+                letter-spacing: 1px;
+            }
+
+            .hero h3 {
+                font-size: 1.4rem;
+                letter-spacing: 2px;
+            }
+
+            .gallery-grid {
+                columns: 1;
+            }
+
+            .gallery-section h2,
+            .contact h2 {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+
+            .pricing-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .package-details {
+                font-size: 0.85rem;
+            }
+
+            .navbar {
+                padding: 0.8rem 1rem;
+            }
+
+            .logo {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="logo">Photography</div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>P H O T O G R A P H E R</h1>
+            <h2>WEDDING PRICE GUIDE</h2>
+            <h3>NEUNGRUTAI</h3>
+            <h3>P A R I N</h3>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery" class="gallery-section">
+        <h2>GALLERY</h2>
+        <div class="gallery-container">
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="picture/1.jpg" alt="Gallery Image 1"></div>
+                <div class="gallery-item"><img src="picture/2.jpg" alt="Gallery Image 2"></div>
+                <div class="gallery-item"><img src="picture/3.jpg" alt="Gallery Image 3"></div>
+                <div class="gallery-item"><img src="picture/4.jpg" alt="Gallery Image 4"></div>
+                <div class="gallery-item"><img src="picture/5.jpg" alt="Gallery Image 5"></div>
+                <div class="gallery-item"><img src="picture/6.jpg" alt="Gallery Image 6"></div>
+                <div class="gallery-item"><img src="picture/7.jpg" alt="Gallery Image 7"></div>
+                <div class="gallery-item"><img src="picture/8.jpg" alt="Gallery Image 8"></div>
+                <div class="gallery-item"><img src="picture/9.jpg" alt="Gallery Image 9"></div>
+                <div class="gallery-item"><img src="picture/10.jpg" alt="Gallery Image 10"></div>
+                <div class="gallery-item"><img src="picture/11.jpg" alt="Gallery Image 11"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="pricing-container">
+            <!-- PHOTOGRA Package -->
+            <div class="pricing-card">
+                <h3>PHOTOGRA</h3>
+                <h4>Candid Photographer</h4>
+                <div class="price-list">
+                    <div class="price-item">
+                        <span>4-5 HRS.</span>
+                        <span>8,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>7-8 HRS.</span>
+                        <span>12,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>10-12 HRS.</span>
+                        <span>15,000</span>
+                    </div>
+                </div>
+                <div class="package-details">
+                    <p>พิธีหมั่นช่วงเช้า 4-5 HRS.</p>
+                    <p>พิธีหมั่นช่วงเช้า+เลี้ยงฉลองช่วงบ่าย 7-8 HRS.</p>
+                    <p>พิธีหมั่นช่วงเช้า+เลี้ยงฉลองช่วงเย็น 10-12 HRS.</p>
+                    <p>คือแพ็คเก็จเริ่มต้นในกรณีที่ลูกค้ามีทีมช่างภาพทีมหลักอยู่แล้วหรือจัดงานภายในเชิญแขกร่วมงานประมาณ
+                        50-100 คน ภาพที่ได้ในแพ็คเกจนี้จะเป็นแนวแคดดิต
+                        และเน้นไปที่ภาพแคนติดเก็บอารมณ์บ่าวสาวและเขกที่มาร่วมงานเป็นบรรยาโดยรวมทั้งหมด
+                        จะเริ่มเก็บภาพตั้งแต่ช่วงที่บ่าวสาวเตรียมตัวอยู่ในห้องแต่งตัวจนจบพิธีการ
+                        โดยที่จะไม่ไปแทรกการทํางานของทีมหลัก ภาพที่ลูกค้าจะได้รับผ่านการคัดและปรับแต่งไฟล์ ภาพทั้งหมด
+                        ประมาณ 400-500 ภาพต่อช่วงเวลา และจะได้รับภาพไฮไลต์หลังจบงานภายใน 1-2 วันจำนวน 100 ภาพ</p>
+                </div>
+            </div>
+
+            <!-- STANDARD Package -->
+            <div class="pricing-card">
+                <h3>STANDARD</h3>
+                <h4>1 Formal Photographer<br>1 Candid Photographer</h4>
+                <div class="price-list">
+                    <div class="price-item">
+                        <span>4-5 HRS.</span>
+                        <span>14,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>7-8 HRS.</span>
+                        <span>20,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>10-12 HRS.</span>
+                        <span>28,000</span>
+                    </div>
+                </div>
+                <div class="package-details">
+                    <p>แพ็คเกจนี้คือการจ้างช่างภาพ 2 คน ของทางเพจเป็นทีม OFFICIAL ในการบับทึกภาพวันแต่งของบ่าวสาว
+                        โดยจะมีช่างภาพหลักเพิ่มเข้ามาในการบันทึกภาพช่วงพิธีการทั้งหมดที่เกิดขึ้นในวันนั้นและ ภาพGROP
+                        SHOT/ภาพหน้า BACKDROP และจะมีผู้ช่วยพร้อมกับไฟต่อเบื้องสำหรับส่องสว่างภาพในงาน 6 จุด
+                        เพื่อให้แสงสว่างพอสำหรับการถ่ายภาพ
+                        ภาพที่บ่าวสาวจะได้รับจะเป็นภาพที่ปรับแต่งโทนสีเรียนร้อยแล้วรวมกันของช่างภาพสองคน ประมาณ 800-1000
+                        ภาพต่อช่วงเวลา และจะได้รับภาพไฮไลต์หลังจบงานภายใน 1-2 วันจำนวน 100 ภาพ</p>
+                </div>
+            </div>
+
+            <!-- FULLTEAM Package -->
+            <div class="pricing-card">
+                <h3>FULLTEAM</h3>
+                <h4>1 Formal Photographer<br>1 Candid Photographer<br>1 Cinema Photographer</h4>
+                <div class="price-list">
+                    <div class="price-item">
+                        <span>4-5 HRS.</span>
+                        <span>22,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>7-8 HRS.</span>
+                        <span>28,000</span>
+                    </div>
+                    <div class="price-item">
+                        <span>10-12 HRS.</span>
+                        <span>38,000</span>
+                    </div>
+                </div>
+                <div class="package-details">
+                    <p>สิ่งที่เพิ่มมาจากแพ็คเกจ STANDARD ในแพ็คเก็จนี้ก็คือ Cinema Photographer
+                        จะเป็นการบันทึกVDOเหตุการณ์สำคัญภายในงานแต่งของคู่บ่าวสาวและตัดต่อนำเสนออออกมาเป็น 2 คลิป โดย
+                        คลิปที่ 1 เรียกว่า Hightlight Story ความยาวไม่เกิน 1 นาทีคลิปนี้จะถูกนำเสนอเป็นแนวตั๋ง
+                        เพื่อให้สามารถนำไป IG story ได้ คลิปที่ 2 จะเป็น Full VDO ความยาวประมาณ 3-5
+                        นาทีขึ้นอยู่กับเพลงพี่บ่าวสาวเลือกและเหตุการณ์ที่เกิดขึ้น ในวันนั้น จะถูกตัดและนำเสบอในสัดส่วน
+                        16:9 เป็น Cinematic VDO</p>
+                </div>
+            </div>
+
+            <!-- SPECIAL Package -->
+            <div class="pricing-card special">
+                <h3>SPECIAL</h3>
+                <div class="special-features">
+                    <p>ถ่ายภาพเบื้องหลังช่วงแต่งตัวก่อนเริ่มงาน 6.00 -7.00 / 16.00-17.00</p>
+                    <p>ส่งไฮไลต์ภายใน 1-2 วัน</p>
+                    <p>Trum drive Giftset</p>
+                    <p>เวลาเริ่มทำงานอาจจะมีการเปลี่ยนแปลงได้ แล้วแต่ตกลงกับบ่าวสาว กรณีมีเก็บภาพเช้ากว่าที่เรากำหนดไว้
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="contact-content">
+            <h2>ติดต่อเรา</h2>
+            <div class="contact-links">
+                <a href="https://www.instagram.com/p.iwat/" target="_blank" rel="noopener noreferrer"
+                    class="contact-link">
+                    <div class="contact-icon">📷</div>
+                    <div class="contact-info">
+                        <h3>Instagram</h3>
+                        <p>@p.iwat</p>
+                    </div>
+                </a>
+                <a href="tel:0970158088" class="contact-link">
+                    <div class="contact-icon">📞</div>
+                    <div class="contact-info">
+                        <h3>โทรศัพท์</h3>
+                        <p>097-015-8088</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 Photography Portfolio. สงวนลิขสิทธิ์.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Enhanced Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -80px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        const animateElements = document.querySelectorAll('.gallery-section h2, .gallery-grid .gallery-item, .pricing-card, .contact h2, .contact-link');
+
+        animateElements.forEach(el => {
+            observer.observe(el);
+        });
+
+        // Enhanced stagger animations with Apple-like timing
+        const galleryItems = document.querySelectorAll('.gallery-grid .gallery-item');
+        galleryItems.forEach((item, index) => {
+            item.style.transitionDelay = `${index * 0.08}s`;
+            item.style.animationDelay = `${index * 0.08}s`;
+        });
+
+        const pricingCards = document.querySelectorAll('.pricing-card');
+        pricingCards.forEach((card, index) => {
+            card.style.transitionDelay = `${index * 0.15}s`;
+            card.style.animationDelay = `${index * 0.15}s`;
+        });
+
+        const contactLinks = document.querySelectorAll('.contact-link');
+        contactLinks.forEach((link, index) => {
+            link.style.transitionDelay = `${index * 0.1}s`;
+            link.style.animationDelay = `${index * 0.1}s`;
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            const heroContent = document.querySelector('.hero-content');
+
+            if (hero && scrolled < window.innerHeight) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+                heroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+        });
+
+        // Enhanced navbar background on scroll
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            const scrollProgress = Math.min(window.scrollY / 200, 1);
+
+            if (window.scrollY > 50) {
+                navbar.style.background = `rgba(0, 0, 0, ${0.8 + scrollProgress * 0.15})`;
+                navbar.style.transform = 'translateY(0)';
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.8)';
+            }
+        });
+
+        // Enhanced gallery item click handler with Apple-like feedback
+        galleryItems.forEach(item => {
+            item.addEventListener('click', function () {
+                // Apple-like press animation
+                this.style.transform = 'scale(0.95)';
+                this.style.transition = 'all 0.1s ease';
+
+                setTimeout(() => {
+                    this.style.transform = 'scale(1.05)';
+                    this.style.zIndex = '10';
+                    this.style.transition = 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+
+                    setTimeout(() => {
+                        this.style.transform = '';
+                        this.style.zIndex = '';
+                        this.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                    }, 300);
+                }, 100);
+            });
+        });
+
+        // Add smooth reveal animation for sections
+        const sections = document.querySelectorAll('section');
+        sections.forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        });
+
+        // Reveal sections on scroll
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'98524fdf20417dc3',t:'MTc1ODg4NDk5Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>
